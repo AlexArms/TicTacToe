@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <button id="testButton">test button</button>
+    <h1>Tic-Tac-Toe</h1>
+    <label for="p1Input">Player One</label>
+    <br/>
+    <input type="text" id="p1Input" name="p1Input">
+    <br/>
+    <label for="p2Input">Player Two</label>
+    <br/>
+    <input type="text" id="p2Input" name="p2Input">
+    <br/>
+    <button type="button" id="addNames">Update Names</button>
+    <br/>
+    <button type="button" id="newGame">New Game</button>
+    <table class="scoreBoard">
+      <thead>
+        <tr>
+          <th id="p1Title">X's Score</th>
+          <th id="p2Title">O's Score</th>
+        </tr>
+      </thead>
+      <tr>
+        <td id="p1Score">0</td>
+        <td id="p2Score">0</td>
+      </tr>
+    </table>
+    <p id="gameStatus"></p>
+    <table class="gameBoard" >
+      <tr id="row1">
+        <td id="00" class="square"></td>
+        <td id="01" class="square"></td>
+        <td id="02" class="square"></td>
+      </tr>
+      <tr id="row2">
+        <td id="10" class="square"></td>
+        <td id="11" class="square"></td>
+        <td id="12" class="square"></td>
+      </tr>
+      <tr id="row3">
+        <td id="20" class="square"></td>
+        <td id="21" class="square"></td>
+        <td id="22" class="square"></td>
+      </tr>
+    </table>
+    <script src="app.js"></script>
+  </body>
+
+</html>

@@ -1,0 +1,54 @@
+body {
+  text-align: center;
+  background-color: skyblue;
+}
+
+h1 {
+  text-align: center;
+  font-size: 38px;
+  margin: 15px auto;
+}
+
+button {
+  margin: 10px auto;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+table {
+  margin: auto;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+.scoreBoard {
+  width: 200px;
+  height: 50px;
+}
+
+td {
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.square {
+  width: 50px;
+  height: 50px;
+}
+
+
+input {
+  border: 2px solid black;
+  border-radius: 8px;
+  margin: 5px auto;
+}
+
+label {
+  font-weight: bold;
+}
+
+/* .test {
+  transform: rotate(-90deg);
+  transition: 1000ms linear all;
+} */
