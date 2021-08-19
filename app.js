@@ -3,7 +3,7 @@ let board = [[null, null, null], [null, null, null], [null, null, null]];
 let win = false;
 
 // player info
-let currentSession = {
+const currentSession = {
   X: {
     name: 'X',
     score: 0
@@ -15,100 +15,96 @@ let currentSession = {
 }
 
 // DOM elements
-let squares = document.getElementsByClassName('square');
-let resetGameButton = document.getElementById('newGame');
-let updateNamesButton = document.getElementById('addNames');
-let gameStatus = document.getElementById('gameStatus');
-let playerOneNameInput = document.getElementById('p1Input');
-let playerTwoNameInput = document.getElementById('p2Input');
-let player1Header = document.getElementById('p1Title');
-let player2Header = document.getElementById('p2Title');
-let player1Score = document.getElementById('p1Score');
-let player2Score = document.getElementById('p2Score');
-let testButton = document.getElementById('testButton');
+const squares = document.getElementsByClassName('square');
+const resetGameButton = document.getElementById('newGame');
+const updateNamesButton = document.getElementById('addNames');
+const gameStatus = document.getElementById('gameStatus');
+const playerOneNameInput = document.getElementById('p1Input');
+const playerTwoNameInput = document.getElementById('p2Input');
+const player1Header = document.getElementById('p1Title');
+const player2Header = document.getElementById('p2Title');
+const player1Score = document.getElementById('p1Score');
+const player2Score = document.getElementById('p2Score');
+const testButton = document.getElementById('testButton');
 
 
 // setting default HTML values
-player1Header.innerHTML = currentSession.X.name + '\'s Score';
-player2Header.innerHTML = currentSession.O.name + '\'s Score';
-player1Score.innerHTML = currentSession.X.score;
-player2Score.innerHTML = currentSession.O.score;
-gameStatus.innerHTML = currentSession[currentPlayer].name + ' goes first';
+player1Header.innerText = currentSession.X.name + '\'s Score';
+player2Header.innerText = currentSession.O.name + '\'s Score';
+player1Score.innerText = currentSession.X.score;
+player2Score.innerText = currentSession.O.score;
+gameStatus.innerText = currentSession[currentPlayer].name + ' goes first';
 
 // EVENT HANDLERS
-// reset game board
 const resetGame = (event) => {
   for (let square of squares) {
-    square.innerHTML = '';
+    square.innerText = '';
   }
   win = false;
   board = [[null, null, null], [null, null, null], [null, null, null]];
-  gameStatus.innerHTML = `${currentSession[currentPlayer].name} goes first`;
+  gameStatus.innerText = `${currentSession[currentPlayer].name} goes first`;
 }
 
-// update names
 const updateNames = (event) => {
-  currentSession.X.name = playerOneNameInput.value;
-  currentSession.O.name = playerTwoNameInput.value;
+  currentSession.X.name = playerOneNameInput.value || currentSession.X.name;
+  currentSession.O.name = playerTwoNameInput.value || currentSession.O.name;
   playerOneNameInput.value = '';
   playerTwoNameInput.value = '';
-  player1Header.innerHTML = currentSession.X.name + '\'s Score';
-  player2Header.innerHTML = currentSession.O.name + '\'s Score';
-  gameStatus.innerHTML = currentSession[currentPlayer].name + ' goes first';
+  player1Header.innerText = currentSession.X.name + '\'s Score';
+  player2Header.innerText = currentSession.O.name + '\'s Score';
+  gameStatus.innerText = currentSession[currentPlayer].name + ' goes first';
 }
 
 // places a piece on the board - does not work if win === true (game is over)
 const playPiece = (event) => {
   if (!win) {
     let position = event.target.id;
-    if (event.target.innerHTML === '') {
-      event.target.innerHTML = currentPlayer;
+    if (event.target.innerText === '') {
+      event.target.innerText = currentPlayer;
       board[position[0]][position[1]] = currentPlayer;
       currentPlayer === 'X' ? currentPlayer = 'O' : currentPlayer = 'X';
     }
-    winDetector(event.target.innerHTML, position[0], position[1]);
+    winDetector(event.target.innerText, position[0], position[1]);
     if (!win) {
-      rotateBoard(event.target.innerHTML, position[0], position[1]);
+      rotateBoard(event.target.innerText, position[0], position[1]);
     }
   } else {
-    gameStatus.innerHTML = `The game has already ended!`;
+    gameStatus.innerText = `The game has already ended!`;
   }
 }
 
 // const rotateAnimate = () => {
-//   // end board state is saved in board var
-//   // css gets attached
-//   // board spins 90 degrees
-//   // gravity animation drags pieces downward
-//   // css removed
-//   // new board is rendered
+//  end board state is saved in board var
+//  css gets attached
+//  board spins 90 degrees
+//  gravity animation drags pieces downward
+//  css removed
+//  new board is rendered
 // }
 
-
-const rotateBoard = (arg1, arg2, arg3) => {
-  var rotatedBoard = [];
-  for (var i = 0; i < board[0].length; i++) {
-    var newRow = [];
-    for (var k = 0; k < board.length; k++) {
-      newRow.push(board[k][i]);
-    }
-    rotatedBoard.push(newRow);
-  }
-  board = rotatedBoard.reverse();
-  gravity();
-  gravity();
-  renderBoard();
-  winDetector(arg1, arg2, arg3);
-}
+// THESE FUNCTIONS ROTATE THE BOARD CCW AFTER EACH PLAY, AND PULL ALL THE PIECES TO THE BOTTOM
+// const rotateBoard = (arg1, arg2, arg3) => {
+//   var rotatedBoard = [];
+//   for (var i = 0; i < board[0].length; i++) {
+//     var newRow = [];
+//     for (var k = 0; k < board.length; k++) {
+//       newRow.push(board[k][i]);
+//     }
+//     rotatedBoard.push(newRow);
+//   }
+//   board = rotatedBoard.reverse();
+//   gravity();
+//   gravity();
+//   renderBoard();
+//   winDetector(arg1, arg2, arg3);
+// }
 
 const gravity = () => {
   for (let i = 0; i < board.length - 1; i++) {
     for (let j = 0; j < board.length; j++) {
-      if (board[i][j] !== null) {
-        if (board[i + 1][j] === null) {
-          board[i + 1][j] = board[i][j];
-          board[i][j] = null;
-        }
+      if (board[i][j] !== null && board[i + 1][j] === null) {
+        board[i + 1][j] = board[i][j];
+        board[i][j] = null;
       }
     }
   }
@@ -117,22 +113,22 @@ const gravity = () => {
 const renderBoard = () => {
   for (let square of squares) {
     let boardPosition = square.id;
-    square.innerHTML = board[boardPosition[0]][boardPosition[1]];
+    square.innerText = board[boardPosition[0]][boardPosition[1]];
   }
 }
 
 const winDetector = (piece, row, column) => {
   if (checkRows(piece, row) || checkColumns(piece, column) || checkDiagonals(piece)) {
-    gameStatus.innerHTML = `${currentSession[piece].name} wins!`;
+    gameStatus.innerText = `${currentSession[piece].name} wins!`;
     win = true;
     currentSession[piece].score += 1;
-    player1Score.innerHTML = currentSession.X.score;
-    player2Score.innerHTML = currentSession.O.score;
+    player1Score.innerText = currentSession.X.score;
+    player2Score.innerText = currentSession.O.score;
     currentPlayer = piece;
   } else if (tieChecker()) {
-    gameStatus.innerHTML = `Tie!`;
+    gameStatus.innerText = `Tie!`;
   } else {
-    gameStatus.innerHTML = `${currentSession[currentPlayer].name} makes the next move`;
+    gameStatus.innerText = `${currentSession[currentPlayer].name} makes the next move`;
   }
 }
 
