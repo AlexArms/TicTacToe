@@ -1,9 +1,9 @@
-let currentPlayer = 'X';
 let board = [[null, null, null], [null, null, null], [null, null, null]];
-let win = false;
 
-// player info
-const currentSession = {
+const session = {
+  currentPlayer: 'X',
+  plays: 0,
+  win: false,
   X: {
     name: 'X',
     score: 0
@@ -14,7 +14,6 @@ const currentSession = {
   }
 }
 
-// DOM elements
 const squares = document.getElementsByClassName('square');
 const resetGameButton = document.getElementById('newGame');
 const updateNamesButton = document.getElementById('addNames');
@@ -25,137 +24,67 @@ const player1Header = document.getElementById('p1Title');
 const player2Header = document.getElementById('p2Title');
 const player1Score = document.getElementById('p1Score');
 const player2Score = document.getElementById('p2Score');
-const testButton = document.getElementById('testButton');
 
-
-// setting default HTML values
-player1Header.innerText = currentSession.X.name + '\'s Score';
-player2Header.innerText = currentSession.O.name + '\'s Score';
-player1Score.innerText = currentSession.X.score;
-player2Score.innerText = currentSession.O.score;
-gameStatus.innerText = currentSession[currentPlayer].name + ' goes first';
-
-// EVENT HANDLERS
 const resetGame = (event) => {
-  for (let square of squares) {
-    square.innerText = '';
-  }
-  win = false;
+  squaresEach(square => square.innerText = '');
+  session.win = false;
   board = [[null, null, null], [null, null, null], [null, null, null]];
-  gameStatus.innerText = `${currentSession[currentPlayer].name} goes first`;
+  session.plays = 0;
+  gameStatus.innerText = `${session[session.currentPlayer].name} goes first`;
+}
+
+const squaresEach = (callback) => {
+  for (const square of squares) {
+    callback(square);
+  }
 }
 
 const updateNames = (event) => {
-  currentSession.X.name = playerOneNameInput.value || currentSession.X.name;
-  currentSession.O.name = playerTwoNameInput.value || currentSession.O.name;
+  session.X.name = playerOneNameInput.value || session.X.name;
+  session.O.name = playerTwoNameInput.value || session.O.name;
   playerOneNameInput.value = '';
   playerTwoNameInput.value = '';
-  player1Header.innerText = currentSession.X.name + '\'s Score';
-  player2Header.innerText = currentSession.O.name + '\'s Score';
-  gameStatus.innerText = currentSession[currentPlayer].name + ' goes first';
+  player1Header.innerText = session.X.name + '\'s Score';
+  player2Header.innerText = session.O.name + '\'s Score';
+  gameStatus.innerText = session[session.currentPlayer].name + ' goes first';
 }
 
-// places a piece on the board - does not work if win === true (game is over)
 const playPiece = (event) => {
-  if (!win) {
+  if (!session.win && session.plays !== 9) {
     let position = event.target.id;
     if (event.target.innerText === '') {
-      event.target.innerText = currentPlayer;
-      board[position[0]][position[1]] = currentPlayer;
-      currentPlayer === 'X' ? currentPlayer = 'O' : currentPlayer = 'X';
+      event.target.innerText = session.currentPlayer;
+      board[position[0]][position[1]] = session.currentPlayer;
+      session.currentPlayer === 'X' ? session.currentPlayer = 'O' : session.currentPlayer = 'X';
+      session.plays++;
     }
     winDetector(event.target.innerText, position[0], position[1]);
-    if (!win) {
-      rotateBoard(event.target.innerText, position[0], position[1]);
-    }
   } else {
     gameStatus.innerText = `The game has already ended!`;
   }
 }
 
-// const rotateAnimate = () => {
-//  end board state is saved in board var
-//  css gets attached
-//  board spins 90 degrees
-//  gravity animation drags pieces downward
-//  css removed
-//  new board is rendered
-// }
-
-// THESE FUNCTIONS ROTATE THE BOARD CCW AFTER EACH PLAY, AND PULL ALL THE PIECES TO THE BOTTOM
-// const rotateBoard = (arg1, arg2, arg3) => {
-//   var rotatedBoard = [];
-//   for (var i = 0; i < board[0].length; i++) {
-//     var newRow = [];
-//     for (var k = 0; k < board.length; k++) {
-//       newRow.push(board[k][i]);
-//     }
-//     rotatedBoard.push(newRow);
-//   }
-//   board = rotatedBoard.reverse();
-//   gravity();
-//   gravity();
-//   renderBoard();
-//   winDetector(arg1, arg2, arg3);
-// }
-
-const gravity = () => {
-  for (let i = 0; i < board.length - 1; i++) {
-    for (let j = 0; j < board.length; j++) {
-      if (board[i][j] !== null && board[i + 1][j] === null) {
-        board[i + 1][j] = board[i][j];
-        board[i][j] = null;
-      }
-    }
-  }
-}
-
-const renderBoard = () => {
-  for (let square of squares) {
-    let boardPosition = square.id;
-    square.innerText = board[boardPosition[0]][boardPosition[1]];
-  }
-}
-
 const winDetector = (piece, row, column) => {
-  if (checkRows(piece, row) || checkColumns(piece, column) || checkDiagonals(piece)) {
-    gameStatus.innerText = `${currentSession[piece].name} wins!`;
-    win = true;
-    currentSession[piece].score += 1;
-    player1Score.innerText = currentSession.X.score;
-    player2Score.innerText = currentSession.O.score;
-    currentPlayer = piece;
-  } else if (tieChecker()) {
+  if (checkRow(piece, row) || checkColumn(piece, column) || checkDiagonals(piece)) {
+    gameStatus.innerText = `${session[piece].name} wins!`;
+    session.win = true;
+    session[piece].score += 1;
+    player1Score.innerText = session.X.score;
+    player2Score.innerText = session.O.score;
+    session.currentPlayer = piece;
+  } else if (session.plays === 9) {
     gameStatus.innerText = `Tie!`;
   } else {
-    gameStatus.innerText = `${currentSession[currentPlayer].name} makes the next move`;
+    gameStatus.innerText = `${session[session.currentPlayer].name} makes the next move`;
   }
 }
 
-const tieChecker = () => {
-  return !win && board.reduce((rowIsNull, row) => {
-    return rowIsNull && row.reduce((pieceIsNull, piece) => {
-      return pieceIsNull && piece !== null;
-    }, true);
-  }, true);
+const checkRow = (piece, row) => {
+  return (board[row][0] === piece && board[row][1] === piece && board[row][2] === piece);
 }
 
-const checkRows = (piece, row) => {
-  for (let i = 0; i < board[row].length; i++) {
-    if (board[row][i] !== piece) {
-      return false;
-    }
-  }
-  return true;
-}
-
-const checkColumns = (piece, column) => {
-  for (let i = 0; i < board.length; i++) {
-    if (board[i][column] !== piece) {
-      return false;
-    }
-  }
-  return true;
+const checkColumn = (piece, column) => {
+  return (board[0][column] === piece && board[1][column] === piece && board[2][column] === piece);
 }
 
 const checkDiagonals = (piece) => {
@@ -163,9 +92,6 @@ const checkDiagonals = (piece) => {
     (board[0][2] === piece && board[1][1] === piece && board[2][0] === piece);
 }
 
-// attaching event handlers
 resetGameButton.addEventListener('click', resetGame);
 updateNamesButton.addEventListener('click', updateNames);
-for (let square of squares) {
-  square.addEventListener("click", playPiece);
-}
+squaresEach(square => square.addEventListener("click", playPiece));

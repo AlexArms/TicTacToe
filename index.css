@@ -11,14 +11,14 @@ h1 {
 
 button {
   margin: 10px auto;
-  border-radius: 10px;
+  border-radius: 0px;
   font-size: 20px;
 }
 
 table {
   margin: auto;
   border: 2px solid black;
-  border-radius: 5px;
+  border-radius: 0px;
 }
 
 .scoreBoard {
@@ -29,7 +29,7 @@ table {
 td {
   text-align: center;
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 0px;
 }
 
 .square {
@@ -40,7 +40,7 @@ td {
 
 input {
   border: 2px solid black;
-  border-radius: 8px;
+  border-radius: 0px;
   margin: 5px auto;
 }
 
